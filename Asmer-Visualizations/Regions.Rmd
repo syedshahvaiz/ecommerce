@@ -1,0 +1,157 @@
+---
+title: "Regional_Plots"
+author: "Asmer Asrar Safi"
+date: "3/1/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
+library(ggrepel)
+library(ggthemes)
+library(viridis)
+library(fmsb)
+library()
+library(ggridges)
+library(skimr)
+library(tidyverse)
+
+ options(scipen = 999)
+```
+
+retail = Retail Value (Millions USD)
+
+
+```{r}
+
+  #  BGD, MYS, NGA, NPL, PAK, VNM
+
+colorz <- c("dodgerblue4", #BGD
+             "darkred", #CHN
+             "darkorange", #IND
+             "pink", #KEN
+             "darkgreen", #LAO
+             "blue") #ZMB
+# ASEAN, South Asia, Sub-Saharan Africa, Latin America & Caribbean, East Asia & Pacific
+```
+
+```{r}
+retails <- Uzair_Data_Merged %>% 
+  select(Country, Year, Region, retail, population, ecom) %>% 
+  mutate(ecom_value = ecom * retail) %>% 
+  mutate(ecom_value = ecom_value/1000) %>% 
+ group_by(Region, Year) %>% 
+  mutate(region_sum = sum(ecom_value)) %>% 
+ mutate(region_sum = region_sum/1000)
+
+
+retails
+```
+
+```{r}
+
+BM_retails <- retails %>% 
+  filter(Country %in% c('BGD', 'PAK', 'VNM', 'NPL', 'MYS', 'NGA'))
+  
+BM_retails %>% 
+  ggplot(aes(Year, ecom_value, color = Country)) + 
+  geom_point() +
+  geom_line(linetype = 'dashed')+
+                                     
+  labs(y = "Total E-Commerce Retail Value (Millions USD)", 
+       x = "Year",
+       title = "Total E-Commerce Retail Value (Millions USD)",
+       subtitle = "Benchmark Countries 2008-2018") +
+  theme_light() +
+  theme(axis.title.x = element_text(size = 8),
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+    scale_color_manual(values = colorz)+
+
+    scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018))
+
+    
+```
+
+
+
+
+
+```{r, fig.height=3, fig.width=6}
+ retails %>%
+  ggplot(aes(Year, region_sum))+
+  geom_point(aes(Year, region_sum, fill = Region), color = "black", shape = 21, size = 2) +
+  geom_line(color = 'grey', linetype = 'dashed') + 
+  facet_wrap(~Region) +
+                                    
+  labs(y = "Total E-Commerce Retail Value (Billions USD)", 
+       x = "Year",
+       title = "Total E-Commerce Retail Value (Billions USD)",
+       subtitle = "By Region - 2008-2018") +
+  theme_light() +
+  theme(axis.title.x = element_text(size = 8),
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+    scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018))
+  
+```
+
+
+
+```{r}
+# For South Asia
+
+SA <- retails %>% 
+  filter(Region == "South Asia") %>% 
+  ggplot(aes(Year, region_sum))+
+
+  geom_point(color = "black", shape = 21, fill = "darkred", size = 2) + 
+  geom_line(color = 'grey', linetype = 'dashed') +
+  theme_minimal(base_size = 9) +
+  theme(axis.text.x = element_text(angle = 45, 
+                                   hjust = 1)) +
+  labs(y = "Total E-Commerce Retail Value (Millions USD)", 
+       x = "Year",
+       title = "Changes in  Total E-Commerce Retail Value Over Time",
+       subtitle = "South Asia 2008-2018") +
+  theme_light() +
+  theme(axis.title.x = element_text(size = 8),
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+    scale_x_continuous(breaks = c(2008, 2010, 2012, 2014, 2016, 2018)) 
+
+SA 
+```
+
+```{r}
+
+
+
+
+```
+
+

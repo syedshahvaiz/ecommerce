@@ -1,0 +1,499 @@
+---
+title: "Graphs-Mostimpvariables"
+author: "Asmer Asrar Safi"
+date: "2/19/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
+library(ggrepel)
+library(ggthemes)
+library(viridis)
+library(ggridges)
+library(skimr)
+library(tidyverse)
+
+options(scipen = 999)
+```
+
+```{r}
+
+Data1 <- Data %>% 
+  filter(Country %in%  c("PAK", "BGD", "VNM", "TUR", "IND", "EGY", "NGA"))
+
+Data2 <- Data1 %>% 
+  filter(Country == "PAK") %>% 
+  filter(Year == 2018)
+
+Data2
+
+```
+
+```{r}
+# Types of scatterplot to be made: 1) GDP and Important Variable in 2018 (Benchmark countries), 2) GDP and Important Variable in 2008-2019 (Benchmark Countries) - Do we want best fit line? 
+
+# 3) GDP and Important Variable
+
+Data1
+```
+
+```{r}
+# GDP and E-Commerce Retail Value
+Data1 %>%
+  filter(Year == 2018) %>% 
+  arrange(desc(dispi)) %>%
+  mutate(Country = factor(Country, Country)) %>%
+  ggplot(aes(x=gdp, y=ecom_mbl, color=Country)) +
+  geom_point(alpha=1,
+             size = 2)  +
+  # scale_color_manual(values = c("skyblue1", "skyblue2", "skyblue4", "dodgerblue1", "dodgerblue2", "dodgerblue3", "dodgerblue4"))+
+  theme_light() +
+  labs(x = "Gross Domestic Product (Millions USD)",
+       y = "Mobile E-Commerce Retail Value (% total retail value)",
+       title = "Mobile E-Commerce Retail Value and GDP",
+       subtitle = "Pakistan and Benchmark Countries - 2018",
+       caption = "Data: Euromonitor") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+  theme(legend.position = "bottom")+
+   geom_label_repel(data = Data2,
+                  aes(gdp, ecom_mbl, label = "Pakistan"),
+                  box.padding   = 0.3,
+                  point.padding = 0.1,
+                  segment.color = 'darkgreen',
+                  color = 'black')
+
+```
+```{r}
+#Broadband subscriptions and GDP
+
+Data1 %>%
+  filter(Year == 2018) %>% 
+  arrange(desc(dispi)) %>%
+  mutate(Country = factor(Country, Country)) %>%
+  ggplot(aes(x=gdp, y=brdbd, color=Country)) +
+  geom_point(alpha=1,
+             size = 2)  +
+  # scale_color_manual(values = c("skyblue1", "skyblue2", "skyblue4", "dodgerblue1", "dodgerblue2", "dodgerblue3", "dodgerblue4"))+
+  theme_light() +
+  labs(x = "Gross Domestic Product (Millions USD)",
+       y = "Fixed-broadband subscriptions per 100 inhabitants",
+       title = "Fixed-broadband subscriptions and GDP",
+       subtitle = "Pakistan and Benchmark Countries - 2018",
+       caption = "Data: Euromonitor") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+  theme(legend.position = "bottom") +
+   geom_label_repel(data = Data2,
+                  aes(gdp, brdbd, label = "Pakistan"),
+                  box.padding   = 0.1,
+                  point.padding = 0.4,
+                  segment.color = 'darkgreen',
+                  color = 'black')
+```
+
+```{r}
+
+# Fixed servers and GDP
+Data1 %>%
+  filter(Year == 2018) %>% 
+  arrange(desc(dispi)) %>%
+  mutate(Country = factor(Country, Country)) %>%
+  ggplot(aes(x=gdp, y=servr, color=Country)) +
+  geom_point(alpha=1,
+             size = 2)  +
+  # scale_color_manual(values = c("skyblue1", "skyblue2", "skyblue4", "dodgerblue1", "dodgerblue2", "dodgerblue3", "dodgerblue4"))+
+  theme_light() +
+  labs(x = "Gross Domestic Product (Millions USD)",
+       y = "Secure Internet servers (per 1 million people)",
+       title = "Secure Internet Servers and GDP",
+       subtitle = "Pakistan and Benchmark Countries - 2018",
+       caption = "Data: Euromonitor") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+  theme(legend.position = "bottom") +
+   geom_label_repel(data = Data2,
+                  aes(gdp, servr, label = "Pakistan"),
+                  box.padding   = 0.6,
+                  point.padding = 0.4,
+                  segment.color = 'darkgreen',
+                  color = 'black')
+
+```
+
+```{r}
+# average Bandwidth and GDP
+
+Data1 %>%
+  filter(Year == 2018) %>% 
+  arrange(desc(dispi)) %>%
+  mutate(Country = factor(Country, Country)) %>%
+  ggplot(aes(x=gdp, y=avgbw, color=Country)) +
+  geom_point(alpha=1,
+             size = 2)  +
+  # scale_color_manual(values = c("skyblue1", "skyblue2", "skyblue4", "dodgerblue1", "dodgerblue2", "dodgerblue3", "dodgerblue4"))+
+  theme_light() +
+  labs(x = "Gross Domestic Product (Millions USD)",
+       y = "Average bandwidth connection speed in \n kilobytes per second (Fixed Broadband)",
+       title = "Average Bandwidth Connection Speed and GDP",
+       subtitle = "Pakistan and Benchmark Countries - 2018",
+       caption = "Data: Euromonitor") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+  theme(legend.position = "bottom") +
+   geom_label_repel(data = Data2,
+                  aes(gdp, avgbw, label = "Pakistan"),
+                  box.padding   = 0.6,
+                  point.padding = 0.4,
+                  segment.color = 'darkgreen',
+                  color = 'black')
+
+
+```
+
+```{r}
+
+#Smartphone and GDP
+
+Data1 %>%
+  filter(Year == 2018) %>% 
+  arrange(desc(dispi)) %>%
+  mutate(Country = factor(Country, Country)) %>%
+  ggplot(aes(x=gdp, y=smart, color=Country)) +
+  geom_point(alpha=1,
+             size = 2)  +
+  # scale_color_manual(values = c("skyblue1", "skyblue2", "skyblue4", "dodgerblue1", "dodgerblue2", "dodgerblue3", "dodgerblue4"))+
+  theme_light() +
+  labs(x = "Gross Domestic Product (Millions USD)",
+       y = "Possession of Smartphones",
+       title = "Smartphone Posession and GDP",
+       subtitle = "Pakistan and Benchmark Countries - 2018",
+       caption = "Data: Euromonitor") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+  theme(legend.position = "bottom") +
+   geom_label_repel(data = Data2,
+                  aes(gdp, smart, label = "Pakistan"),
+                  box.padding   = 0.6,
+                  point.padding = 0.1,
+                  segment.color = 'darkgreen',
+                  color = 'black')
+```
+
+```{r}
+#GDP and Dispi
+Data1 %>%
+  filter(Year == 2018) %>% 
+  arrange(desc(dispi)) %>%
+  mutate(Country = factor(Country, Country)) %>%
+  ggplot(aes(x=gdp, y=dispi, color=Country)) +
+  geom_point(alpha=1,
+             size = 2)  +
+  # scale_color_manual(values = c("skyblue1", "skyblue2", "skyblue4", "dodgerblue1", "dodgerblue2", "dodgerblue3", "dodgerblue4"))+
+  theme_light() +
+  labs(x = "Gross Domestic Product (Millions USD)",
+       y = "Disposable Income per capita",
+       title = "Disposable INcome per Capita and GDP",
+       subtitle = "Pakistan and Benchmark Countries - 2018",
+       caption = "Data: Euromonitor") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+  theme(legend.position = "bottom") +
+   geom_label_repel(data = Data2,
+                  aes(gdp, dispi, label = "Pakistan"),
+                  box.padding   = 0.6,
+                  point.padding = 0.1,
+                  segment.color = 'darkgreen',
+                  color = 'black')
+```
+
+
+```{r}
+#mobile_f_gap 
+
+Data1 %>%
+  filter(Year == 2018) %>% 
+  arrange(desc(dispi)) %>%
+  mutate(Country = factor(Country, Country)) %>%
+  ggplot(aes(x=gdp, y=mobile_f_gap, color=Country)) +
+  geom_point(alpha=1,
+             size = 2)  +
+  # scale_color_manual(values = c("skyblue1", "skyblue2", "skyblue4", "dodgerblue1", "dodgerblue2", "dodgerblue3", "dodgerblue4"))+
+  theme_light() +
+  labs(x = "Gross Domestic Product (Millions USD)",
+       y = "Gender gap in mobile ownership",
+       title = "Gender gap in mobile ownership and GDP",
+       subtitle = "Pakistan and Benchmark Countries - 2018",
+       caption = "Data: Euromonitor") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+  theme(legend.position = "bottom") +
+   geom_label_repel(data = Data2,
+                  aes(gdp, mobile_f_gap, label = "Pakistan"),
+                  box.padding   = 0.6,
+                  point.padding = 0.1,
+                  segment.color = 'darkgreen',
+                  color = 'black')
+```
+```{r}
+fit <- lm(gdp ~ mobile_f_gap, data = data.frame(Data_Nadia))
+          
+summary(fit)
+
+#plot codes
+layout(matrix(c(1,2,3,4),1,1)) # optional 4 graphs/page
+plot(fit)
+
+#graphs - Regression 
+```
+
+
+```{r}
+# "Data" has everything in it. data18 is Data filtered for 2018. databm is 2018 benchmark countries. 
+
+
+# Graph for Mobile E-Commerce and GDP 
+
+data18 <- Data %>% filter(Year == 2018)
+databm <- data18 %>%  filter(Country %in%  c("PAK", "BGD", "VNM", "TUR", "IND", "EGY", "NGA"))
+datapak18 <- data18 %>%  filter(Country == "PAK")
+
+
+ecomgdp <- Data %>% 
+  filter(Year == 2018) %>% 
+  ggplot(aes(gdp, ecom)) +
+  geom_point(color = "darkgrey", alpha = 0.6, size = 2.5)  +
+  scale_x_log10() +
+  geom_smooth(aes(gdp, ecom), method = "lm", se = FALSE, size = 0.5, linetype = "dashed") +
+  theme_minimal() +
+  geom_point(data = databm, aes(gdp, ecom), color = "skyblue2", alpha = 0.6, color = "black", size = 2.5) +
+  geom_point(data = datapak18, aes(gdp, ecom), color = "darkgreen",  color = "black", size = 2.5) +
+  geom_label_repel(data = datapak18,
+                  aes(gdp, ecom, label = "PAK"),
+                  box.padding   = 0.3,
+                  point.padding = 0.3,
+                  # label.size = 0.15,
+                  # min.segment.length = 6,
+                   segment.color = 'black',
+                  color = 'darkgreen') +
+  labs(x = "Log of Gross Domestic Product (Millions USD)",
+       y = "Mobile E-Commerce Retail Value (% total retail value)",
+       title = "Mobile E-Commerce Retail Value and GDP",
+       subtitle = "Year: 2018",
+       caption = "Data: Euromonitor") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) 
+
+ecomgdp
+
+```
+
+```{r}
+
+
+dispigdp <- Data %>% 
+  filter(Year == 2018) %>% 
+  ggplot(aes(gdp, servr)) +
+  geom_point(color = "darkgrey", alpha = 0.6, size = 2.5)  +
+  scale_x_log10() +
+  scale_y_log10() +
+  geom_smooth(aes(gdp, servr), method = "lm", se = FALSE, size = 0.5, linetype = "dashed") +
+  theme_minimal() +
+  geom_point(data = databm, aes(gdp, servr), color = "skyblue2", alpha = 0.6, color = "black", size = 2.5) +
+  geom_point(data = datapak18, aes(gdp, servr), color = "darkgreen",  color = "black", size = 2.5) +
+  geom_label_repel(data = datapak18,
+                  aes(gdp, servr, label = "PAK"),
+                  box.padding   = 0.6,
+                  point.padding = 0.3,
+                  # label.size = 0.15,
+                  # min.segment.length = 6,
+                   segment.color = 'black',
+                  color = 'darkgreen') +
+  labs(x = "Log of Gross Domestic Product (Millions USD)",
+       y = "Log of Mobile Online Travel Sales (% Retail)",
+       title = "GDP and Mobile Online Travel Sales",
+       subtitle = "Year: 2018",
+       caption = "Data: Euromonitor") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) 
+
+dispigdp
+
+```
+
+
+```{r}
+# ECom as dependent variable
+
+dispiecom <- Data %>% 
+  filter(Year == 2018) %>% 
+  ggplot(aes(dispi, ecom)) +
+  geom_point(color = "darkgrey", alpha = 0.6, size = 2.5)  +
+  geom_smooth(aes(dispi, ecom), method = "lm", se = FALSE, size = 0.5, linetype = "dashed") +
+  theme_minimal() +
+  geom_point(data = databm, aes(dispi, ecom), color = "skyblue2", alpha = 0.6, color = "black", size = 2.5) +
+  geom_point(data = datapak18, aes(dispi, ecom), color = "darkgreen",  color = "black", size = 2.5) +
+  geom_label_repel(data = datapak18,
+                  aes(dispi, ecom, label = "PAK"),
+                  box.padding   = 0.6,
+                  point.padding = 0.3,
+                  # label.size = 0.15,
+                  # min.segment.length = 6,
+                   segment.color = 'black',
+                  color = 'darkgreen') +
+  labs(x = "Disposable Income Per Capita",
+       y = "Mobile E-Commerce Retail Value (% total retail value)",
+       title = "Disposable Income and E-Commerce Retail Value",
+       subtitle = "Year: 2018",
+       caption = "Data: Euromonitor") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) 
+dispiecom
+
+```
+```{r}
+# data18 <- Data %>% filter(Year == 2018)
+# databm <- data18 %>%  filter(Country %in%  c("PAK", "BGD", "VNM", "TUR", "IND", "EGY", "NGA"))
+# datapak18 <- data18 %>%  filter(Country == "PAK")
+
+# Summary statistics for each variable
+
+# Quartiles, Mean, Median
+
+
+datapro <- function(x){
+  
+  # Arranging by descending order for all countries in 2018 for a particular variable
+  
+
+  yaen <- data18 %>%
+    select(Country, x) %>%
+    arrange(desc(x))
+  
+  # Producing summary statistics for all countries in 2018 for a particular variable
+  
+  bro <- data18 %>%
+    select(Country, x) %>%
+    summary()
+ 
+  # Same process, but for benchmark countries
+
+  crazy <- databm %>%
+    select(Country, x) %>%
+    arrange(desc(x)) 
+
+  dog <- databm %>%
+    select(Country, x) %>%
+    summary()
+  
+  list(a = yaen, b = bro, c = crazy, d = dog)
+
+}
+
+ret = datapro("smart")
+list2env(ret, env=environment())
+#a=ret$a;b=ret$b    #Same as previous line
+
+print(b);print(d);print(a);print(c)
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+

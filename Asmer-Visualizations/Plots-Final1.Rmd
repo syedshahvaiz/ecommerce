@@ -1,0 +1,322 @@
+---
+title: "Merged"
+author: "Asmer Asrar Safi"
+date: "2/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
+library(ggrepel)
+library(ggthemes)
+library(viridis)
+library(fmsb)
+library()
+library(ggridges)
+library(skimr)
+library(tidyverse)
+
+ options(scipen = 999)
+```
+
+```{r}
+
+# per-capita GDP: WB_ny_gdp_pcap_pp_cd. Filtering merged data (with GDP per capita) to create 3 subsets of data: merged_18 has all of the countries' data for 2018. merged_bm has all of the comparator countries' data for 2018. merged_pak is just Pakistan's data for 2018. 
+
+merged_18 <- Uzair_Data_Merged %>% 
+  filter(Year == 2018)
+
+merged_bm <- merged_18 %>% 
+  filter(Country %in% c("IND", 
+                        "BGD",
+                        "TUR",
+                        "VNM", 
+                        "NPL", 
+                        "ZMB",
+                        "KEN", 
+                        "CHN", 
+                        "MAR", 
+                        "LAO"))
+
+ colorz <- c("dodgerblue4", #BGD
+             "red", #CHN
+             "darkorange", #IND
+             "darkorchid3", #KEN
+             "pink", #LAO
+             "darkblue", #MAR
+             "skyblue3", #NPL
+             "darkred", #TUR
+             "turquoise", #VNM
+             "yellowgreen") #ZMB
+
+merged_pak <- merged_18 %>% 
+  filter(Country == "PAK")
+
+merged_18
+```
+
+```{r}
+# What graphs do we want to make? 1) Ecommerce mobile on Y-axis and most important variables (as determined by Random Forest) on the X-axis. 2) GDP per capita on X-Axis and Important variable penetration on Y-Axis
+
+# Current problem: Even though we now have GDP per capita, we still need to be able to write it in factors of 10 at max. Need to figure this out. 
+
+# Also have to make Spider Charts. 
+
+```
+
+```{r}
+
+# GDP per capita and important variable. Save labels for future use. 
+
+```
+
+Variables from Random Forest:
+
+ecom_mbl – Mobile E-Commerce Retail Value (% of total Retail)
+brdbd – Fixed broadband subscriptions per 100 inhabitants
+mtravl – Mobile Online Travel Sales
+
+servr – Secure Internet Servers per 1 million people (WB_ny_gdp_pcap_pp_cd, servr), (GDP per capita and Secure Internet Servers)
+
+egovi – E-Government Development Index
+avgbw – Average Bandwidth Connection Speed in Kilobytes per second
+apps – Apps developed per person
+mbl_access – Use of a Mobile Phone to Access the Internet (% of Population)
+rdexp – Research and Development Expenditure
+mdply – Made digital payments in the last year (15+)
+download_gsma – Mobile download speeds
+cpvpc – Card Payment Value per capita (% of transaction value)
+dispi – Disposable Income per capita
+mobilie_f_gap – Gender gap in mobile ownerships
+gov_mbl – Government transfers made through 
+retail – Retail value
+hhi_gsma – HH Index
+hset_price – Handset price
+middle – Middle Class Households (percentage of total)
+smart – Smartphone possession 
+
+WB_ny_gdp_pcap_pp_cd - per capita GDP. 
+
+
+## GRAPH FOR GDP and VARIABLE
+
+```{r}
+
+merged_18 %>%  
+  ggplot(aes(WB_ny_gdp_pcap_pp_cd, servr)) +
+  geom_point(color = "darkgrey", alpha = 0.6, size = 2.5)  +
+  scale_y_log10() +
+  geom_smooth(aes(WB_ny_gdp_pcap_pp_cd, servr), method = "lm", se = FALSE, size = 0.5, linetype = "dashed") +
+  theme_minimal() +
+  geom_point(data = merged_bm, aes(WB_ny_gdp_pcap_pp_cd, servr), color = "skyblue2", alpha = 0.6, color = "black", size = 2.5) +
+  geom_point(data = merged_pak, aes(WB_ny_gdp_pcap_pp_cd, servr), color = "darkgreen",  color = "black", size = 2.5) +
+  geom_label_repel(data = merged_pak,
+                  aes(WB_ny_gdp_pcap_pp_cd, servr, label = "PAK"),
+                  box.padding   = 0.6,
+                  point.padding = 0.3,
+                  # label.size = 0.15,
+                  # min.segment.length = 6,
+                   segment.color = 'black',
+                  color = 'darkgreen') +
+  labs(x = "Log of Per Capita GDP PPP",
+       y = "Secure Internet Servers per 1 million people",
+       title = "GDP per capita and Secure Internet Servers",
+       subtitle = "Year: 2018",
+       caption = "Data: Euromonitor") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+    scale_x_continuous()+
+    scale_x_log10(breaks = c(1000, 10000, 100000),
+                  labels = c(1, 10, 100)) 
+
+
+
+```
+
+# GDP and variable with colored benchmark
+
+
+
+```{r}
+merged_18 %>%  
+  ggplot(aes(WB_ny_gdp_pcap_pp_cd, servr)) +
+  geom_point(color = "darkgrey", alpha = 0.6, size = 2.5)  +
+  scale_y_log10() +
+  geom_smooth(aes(WB_ny_gdp_pcap_pp_cd, servr), method = "lm", se = FALSE, size = 0.5, linetype = "dashed") +
+  theme_minimal() +
+  geom_point(data = merged_bm, aes(WB_ny_gdp_pcap_pp_cd, servr, color = Country), alpha = 0.6, size = 2.5) +
+  geom_point(data = merged_pak, aes(WB_ny_gdp_pcap_pp_cd, servr), shape = 22, size = 3, fill = "darkgreen",  color = "black", size = 2.5) +
+  geom_label_repel(data = merged_pak,
+                   size = 3,
+                  aes(WB_ny_gdp_pcap_pp_cd, servr, label = "PAK"),
+                  box.padding   = 0.5,
+                  point.padding = 0.5,
+                  segment.color = 'black',
+                  color = 'darkgreen') +
+  labs(x = "Log of Per Capita GDP PPP",
+       y = "Secure Internet Servers per 1 million people",
+       title = "GDP per capita and Secure Internet Servers",
+       subtitle = "Year: 2018",
+       caption = "Data: Euromonitor") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+    scale_x_continuous()+
+    scale_x_log10(breaks = c(1000, 10000, 100000),
+                  labels = c(1, 10, 100)) +
+  scale_color_manual(values = colorz)
+
+
+
+```
+
+
+
+## GRAPH FOR ECOM AND VARIABLE
+
+```{r}
+
+
+ merged_18 %>% 
+  ggplot(aes(dispi, ecom)) +
+  geom_point(color = "darkgrey", alpha = 0.6, size = 2.5)  +
+  geom_smooth(aes(dispi, ecom), method = "lm", se = FALSE, size = 0.5, linetype = "dashed") +
+  theme_minimal() +
+  geom_point(data = merged_bm, aes(dispi, ecom, color = Country), alpha = 0.6, size = 2.5) +
+  geom_point(data = datapak18, aes(dispi, ecom), shape = 22, size = 3, fill = "darkgreen",  color = "black", size = 2.5) +
+  geom_label_repel(data = merged_pak,
+                   size = 3,
+                  aes(dispi, ecom, label = "PAK"),
+                  box.padding   = 0.8,
+                  point.padding = 0.3,
+                   segment.color = 'black',
+                  color = 'darkgreen') +
+  labs(x = "Disposable Income Per Capita (USD)",
+       y = "Mobile E-Commerce Retail Value (% total retail value)",
+       title = "Disposable Income and E-Commerce Retail Value",
+       subtitle = "Year: 2018",
+       caption = "Data: Euromonitor") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+  scale_color_manual(values = colorz) +
+  scale_x_log10()
+
+```
+
+# From multi-way importance plot (Random Forest) we get 5 most important variables: ecom_mbl, avgbw, servr, brdbd, smart
+
+# Plotting graphs for both them with ecom (E-Commerce Retail Value (% total retail value)) and per capita GDP. 
+
+```{r}
+# ecom_mbl
+
+# GDP
+merged_18 %>%  
+  ggplot(aes(WB_ny_gdp_pcap_pp_cd, midle)) +
+  geom_point(color = "darkgrey", alpha = 0.6, size = 2.5)  +
+  # scale_y_log10() +
+  geom_smooth(aes(WB_ny_gdp_pcap_pp_cd, midle), method = "lm", se = FALSE, size = 0.5, linetype = "dashed") +
+  theme_minimal() +
+  geom_point(data = merged_bm, aes(WB_ny_gdp_pcap_pp_cd, midle, color = Country), alpha = 0.6, size = 2.5) +
+  geom_point(data = merged_pak, aes(WB_ny_gdp_pcap_pp_cd, midle), shape = 22, size = 3, fill = "darkgreen",  color = "black", size = 2.5) +
+  geom_label_repel(data = merged_pak,
+                   size = 3,
+                  aes(WB_ny_gdp_pcap_pp_cd, midle, label = "PAK"),
+                  box.padding   = 0.5,
+                  point.padding = 0.5,
+                  segment.color = 'black',
+                  color = 'darkgreen') +
+  labs(x = "Log of Per Capita GDP PPP",
+       y = "Middle Class Households (% of Total)",
+       title = "GDP per capita and Middle Class Households",
+       subtitle = "Year: 2018",
+       caption = "Data: GSMA") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+    scale_x_continuous()+
+    scale_x_log10(breaks = c(1000, 10000, 100000),
+                  labels = c(1, 10, 100)) +
+  scale_color_manual(values = colorz)
+
+```
+
+# E-Commerce Retail Value (% total retail value)
+
+```{r}
+
+ merged_18 %>% 
+  ggplot(aes(mobile_f_gap, ecom)) +
+  geom_point(color = "darkgrey", alpha = 0.6, size = 2.5)  +
+  geom_smooth(aes(mobile_f_gap, ecom), method = "lm", se = FALSE, size = 0.5, linetype = "dashed") +
+  theme_minimal() +
+  geom_point(data = merged_bm, aes(mobile_f_gap, ecom, color = Country), alpha = 0.6, size = 2.5) +
+  geom_point(data = datapak18, aes(mobile_f_gap, ecom), shape = 22, size = 3, fill = "darkgreen",  color = "black", size = 2.5) +
+  geom_label_repel(data = merged_pak,
+                   size = 3,
+                  aes(mobile_f_gap, ecom, label = "PAK"),
+                  box.padding   = 0.8,
+                  point.padding = 0.3,
+                   segment.color = 'black',
+                  color = 'darkgreen') +
+  labs(x = "Gender gap in mobile ownership",
+       y = "E-Commerce Retail Value (% total retail value)",
+       title = "Gender gap in mobile ownership and \n E-Commerce Retail Value (% of total retail value)",
+       subtitle = "Year: 2018",
+       caption = "Data: GSMA") +
+  theme(axis.title.x = element_text(size = 8), 
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(face = "bold",
+                                    size = 10,
+                                    hjust = 0.5),
+        plot.subtitle = element_text(size = 10,
+                                     hjust = 0.5),
+        plot.caption =  element_text(face = "italic",
+                                      hjust = 0.5,
+                                      size = 8)) +
+  scale_color_manual(values = colorz)
+```
+
+
+```{r}
+merged_18
+```
+
+
+
+
+
+
